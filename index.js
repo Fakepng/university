@@ -72,16 +72,14 @@ const multibar = new cliProgress.MultiBar(
       }
 
       facultiesArray.push({
-        faculty: faculty[1],
-        major: majorArray,
+        [faculty[1]]: majorArray,
       });
 
       facultiesProgress.increment();
     }
 
     universitiesArray.push({
-      university: university[1],
-      faculties: facultiesArray,
+      [university[1]]: facultiesArray,
     });
 
     universitiesProgress.increment();
