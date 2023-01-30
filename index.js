@@ -29,9 +29,8 @@ const multibar = new cliProgress.MultiBar(
 
   amountOfUniversity = universitiesName.length;
   universitiesProgress = multibar.create(amountOfUniversity, 0);
-  universitiesProgress.update(0, { filename: "university" });
   facultiesProgress = multibar.create(100, 0);
-  facultiesProgress.update(0, { filename: "faculties" });
+  majorProgress = multibar.create(100, 0);
 
   for (university of universitiesName) {
     await page.goto(university[0], {
@@ -51,13 +50,38 @@ const multibar = new cliProgress.MultiBar(
     const facultiesArray = [];
 
     for (faculty of faculties) {
-      facultiesArray.push(faculty[1]);
+      await page.goto(faculty[0], {
+        waitUntil: "networkidle0",
+      });
+
+      const majorList = await page.evaluate(() =>
+        Array.from(document.querySelectorAll("tr > a")).map((a) => [
+          a.href,
+          a.innerHTML.match(/(?<=<td>\d+. )(.*?)(?=<\/td>)/)[0],
+        ])
+      );
+
+      amountOfMajor = majorList.length;
+      majorProgress.start(amountOfMajor, 0);
+
+      const majorArray = [];
+
+      for (major of majorList) {
+        majorArray.push(major[1]);
+        majorProgress.increment();
+      }
+
+      facultiesArray.push({
+        faculty: faculty[1],
+        major: majorArray,
+      });
+
       facultiesProgress.increment();
     }
 
     universitiesArray.push({
       university: university[1],
-      faculty: facultiesArray,
+      faculties: facultiesArray,
     });
 
     universitiesProgress.increment();
