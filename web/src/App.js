@@ -46,7 +46,12 @@ function App() {
   };
 
   const handleMajorChange = (event) => {
-    event.target.value ? setState(3) : setState(2);
+    if (event.target.value) {
+      setState(3);
+    } else {
+      setState(2);
+      setCourse([]);
+    }
     setSelectMajor(event.target.value);
     // setSearchParams({ major: event.target.value });
   };
