@@ -7,6 +7,15 @@ import {
   Heading,
   Select,
   Text,
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+  TableContainer,
 } from "@chakra-ui/react";
 
 import university from "./university.json";
@@ -19,23 +28,27 @@ function App() {
   const [selectFaculty, setSelectFaculty] = useState("");
   const [major, setMajor] = useState([]);
   const [selectMajor, setSelectMajor] = useState("");
+  const [course, setCourse] = useState([]);
 
   const handleUniChange = (event) => {
     event.target.value ? setState(1) : setState(0);
     setSelectUni(event.target.value);
     setSelectFaculty("");
     setSelectMajor("");
+    // setSearchParams({ uni: event.target.value }, { fac: "" }, { major: "" });
   };
 
   const handleFacChange = (event) => {
     event.target.value ? setState(2) : setState(1);
     setSelectFaculty(event.target.value);
     setSelectMajor("");
+    // setSearchParams({ fac: event.target.value }, { major: "" });
   };
 
   const handleMajorChange = (event) => {
     event.target.value ? setState(3) : setState(2);
     setSelectMajor(event.target.value);
+    // setSearchParams({ major: event.target.value });
   };
 
   useEffect(() => {
@@ -53,6 +66,7 @@ function App() {
         facArray.push(Object.keys(fac)[0]);
       }
       setFaculties(facArray);
+      setCourse([]);
     }
   }, [selectUni]);
 
@@ -62,19 +76,32 @@ function App() {
       for (const major of university[uni.indexOf(selectUni)][selectUni][
         faculties.indexOf(selectFaculty)
       ][selectFaculty]) {
-        majorArray.push(major);
+        majorArray.push(Object.keys(major)[0]);
       }
       setMajor(majorArray);
+      setCourse([]);
     }
   }, [selectFaculty]);
+
+  useEffect(() => {
+    if (selectMajor) {
+      const majorArray = [];
+      for (const major of university[uni.indexOf(selectUni)][selectUni][
+        faculties.indexOf(selectFaculty)
+      ][selectFaculty]) {
+        majorArray.push(major);
+      }
+      setCourse(majorArray[major.indexOf(selectMajor)][selectMajor]);
+    }
+  }, [selectMajor]);
 
   return (
     <>
       <Center m={10}>
         <Heading>University</Heading>
       </Center>
-      <Container>
-        <Grid gridTemplateColumns={"1fr 9fr"} gap={6}>
+      <Container maxW="container.sm">
+        <Grid gridTemplateColumns={"1fr 9fr"} gap={6} mb={10}>
           <GridItem w="100%" h="10">
             <Text fontSize="2xl" align="right">
               University
@@ -133,6 +160,18 @@ function App() {
           </GridItem>
         </Grid>
       </Container>
+      <TableContainer minW="60%" mx={10}>
+        <Table variant="simple">
+          <Tbody>
+            {course.map((c) => (
+              <Tr key={c}>
+                <Td>{c}</Td>
+              </Tr>
+            ))}
+            <Tr></Tr>
+          </Tbody>
+        </Table>
+      </TableContainer>
     </>
   );
 }

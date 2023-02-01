@@ -17,7 +17,7 @@ const multibar = new cliProgress.MultiBar(
   const page = await browser.newPage();
 
   await page.goto("https://www.mytcas.com/universities", {
-    waitUntil: "networkidle0",
+    waitUntil: "networkidle2",
   });
 
   const universitiesName = await page.evaluate(() =>
@@ -31,10 +31,11 @@ const multibar = new cliProgress.MultiBar(
   universitiesProgress = multibar.create(amountOfUniversity, 0);
   facultiesProgress = multibar.create(100, 0);
   majorProgress = multibar.create(100, 0);
+  courseProgress = multibar.create(100, 0);
 
   for (university of universitiesName) {
     await page.goto(university[0], {
-      waitUntil: "networkidle0",
+      waitUntil: "networkidle2",
     });
 
     const faculties = await page.evaluate(() =>
@@ -51,7 +52,7 @@ const multibar = new cliProgress.MultiBar(
 
     for (faculty of faculties) {
       await page.goto(faculty[0], {
-        waitUntil: "networkidle0",
+        waitUntil: "networkidle2",
       });
 
       const majorList = await page.evaluate(() =>
@@ -67,7 +68,31 @@ const multibar = new cliProgress.MultiBar(
       const majorArray = [];
 
       for (major of majorList) {
-        majorArray.push(major[1]);
+        await page.goto(major[0], {
+          waitUntil: "networkidle2",
+        });
+
+        const courseList = await page.evaluate(() =>
+          Array.from(document.querySelectorAll("tr > a")).map((a) => [
+            a.href,
+            a.innerHTML,
+          ])
+        );
+
+        amountOfCourse = courseList.length;
+        courseProgress.start(amountOfCourse, 0);
+
+        const coursesArray = [];
+
+        for (course of courseList) {
+          coursesArray.push(course[1]);
+          courseProgress.increment();
+        }
+
+        majorArray.push({
+          [major[1]]: coursesArray,
+        });
+
         majorProgress.increment();
       }
 
