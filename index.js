@@ -15,9 +15,8 @@ facultiesProgress = multibar.create(100, 0);
 majorProgress = multibar.create(100, 0);
 courseProgress = multibar.create(100, 0);
 
-const date = Date();
-const startTime = date.now();
-console.log(date.toLocaleString());
+const startTime = Date.now();
+console.log(Date().toLocaleString());
 
 let universitiesCounter = 0;
 let facultiesCounter = 0;
