@@ -44,8 +44,13 @@ const courseScrape = async ({ page, courseList }) => {
       )
     );
 
+    const courseName = course[1].replace(
+      /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g,
+      ""
+    );
+
     coursesArray.push({
-      [course[1]]: roundList,
+      [courseName]: roundList,
     });
     courseProgress.increment();
     courseCounter++;

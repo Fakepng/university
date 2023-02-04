@@ -29,6 +29,7 @@ function App() {
   const [major, setMajor] = useState([]);
   const [selectMajor, setSelectMajor] = useState("");
   const [course, setCourse] = useState([]);
+  const [courseName, setCourseName] = useState("");
 
   const handleUniChange = (event) => {
     event.target.value ? setState(1) : setState(0);
@@ -96,7 +97,9 @@ function App() {
       ][selectFaculty]) {
         majorArray.push(major);
       }
+      // console.log(majorArray);
       setCourse(majorArray[major.indexOf(selectMajor)][selectMajor]);
+      console.log(majorArray[major.indexOf(selectMajor)][selectMajor]);
     }
   }, [selectMajor]);
 
@@ -167,13 +170,25 @@ function App() {
       </Container>
       <TableContainer minW="60%" mx={10}>
         <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Portfolio</Th>
+              <Th>Quota</Th>
+              <Th>Admission</Th>
+              <Th>Direct Admission</Th>
+            </Tr>
+          </Thead>
           <Tbody>
             {course.map((c) => (
-              <Tr key={c}>
-                <Td>{c}</Td>
+              <Tr key={Object.keys(c)[0]}>
+                <Td>{Object.keys(c)[0]}</Td>
+                <Td>{c[Object.keys(c)[0]][0]}</Td>
+                <Td>{c[Object.keys(c)[0]][1]}</Td>
+                <Td>{c[Object.keys(c)[0]][2]}</Td>
+                <Td>{c[Object.keys(c)[0]][3]}</Td>
               </Tr>
             ))}
-            <Tr></Tr>
           </Tbody>
         </Table>
       </TableContainer>
